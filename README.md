@@ -10,6 +10,8 @@
 
 *Seamlessly convert Tart virtual machines to Lume format with a single command*
 
+![tlume Demo](./tlume-demo.gif)
+
 </div>
 
 ## 🌟 Features
