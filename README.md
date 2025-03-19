@@ -5,7 +5,8 @@
 ![tlume Logo](https://img.shields.io/badge/tlume-Virtual%20Machine%20Converter-blue?style=for-the-badge)
 
 [![Release](https://img.shields.io/github/v/release/aktech/tlume?style=flat-square)](https://github.com/aktech/tlume/releases)
-[![Go Report Card](https://goreportcard.com/badge/github.com/aktech/tlume)](https://goreportcard.com/report/github.com/aktech/tlume)
+[![Build](https://github.com/aktech/tlume/actions/workflows/build.yml/badge.svg)](https://github.com/aktech/tlume/actions/workflows/build.yml)
+[![GoReleaser](https://github.com/aktech/tlume/actions/workflows/release.yml/badge.svg)](https://github.com/aktech/tlume/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 *Seamlessly convert Tart virtual machines to Lume format with a single command*
