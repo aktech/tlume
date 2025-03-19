@@ -15,8 +15,7 @@ builds:
       - linux
       - windows
       - darwin
-    dir: tlume
-    main: .
+    main: ./tlume/main.go
 
 archives:
   - formats: [tar.gz]
