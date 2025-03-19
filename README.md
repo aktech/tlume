@@ -21,6 +21,18 @@
 
 ## 📦 Installation
 
+### One-Line Install (recommended)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aktech/tlume/main/install.sh | sh
+```
+
+This installer automatically:
+- Detects your OS and architecture
+- Downloads the appropriate binary
+- Installs to your PATH
+- Provides setup instructions
+
 ### Direct Download
 
 Download the [latest release](https://github.com/aktech/tlume/releases) for your platform.
@@ -53,10 +65,11 @@ Example:
 tlume macos-ventura
 ```
 
-You can also specify a custom disk size:
+You can also specify a custom disk size with unit suffix:
 
 ```bash
-tlume -disk-size 100 macos-ventura  # Set disk size to 100GB
+tlume -disk-size 100GB macos-ventura  # Set disk size to 100GB
+tlume -disk-size 2TB macos-ventura    # Set disk size to 2TB
 ```
 
 This will:
@@ -68,7 +81,7 @@ This will:
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `-disk-size` | Disk size in GB | 85GB |
+| `-disk-size` | Disk size with unit (e.g., 100GB, 2TB) | 85GB |
 
 ## ⚙️ How It Works
 
@@ -90,7 +103,7 @@ The conversion process preserves:
 
 ### Disk Size
 
-By default, tlume sets the disk size to 85GB for converted VMs. Since the Tart configuration doesn't include disk size information, this parameter needs to be explicitly set for Lume. You can modify this using the `-disk-size` flag if your VM requires more or less space. The value is specified in gigabytes, making it more convenient to use (e.g., `-disk-size 100` for 100GB). Note that this setting only affects the configuration and doesn't resize the actual disk image.
+By default, tlume sets the disk size to 85GB for converted VMs. Since the Tart configuration doesn't include disk size information, this parameter needs to be explicitly set for Lume. You can modify this using the `-disk-size` flag if your VM requires more or less space. The value can be specified with a unit suffix (e.g., `-disk-size 100GB` or `-disk-size 2TB`), making it more intuitive to use. Supported units are B, KB, MB, GB, and TB. If no unit is specified, GB is assumed. Note that this setting only affects the configuration and doesn't resize the actual disk image.
 
 ## 🤝 Contributing
 
