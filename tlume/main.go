@@ -2,23 +2,40 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"github.com/schollz/progressbar/v3"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 )
 
 func main() {
 	log.SetOutput(os.Stdout)
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 
-	if len(os.Args) != 2 {
-		log.Fatal("Usage: tlume <machine_name>")
+	// Define command line flags
+	var diskSizeStr string
+	flag.StringVar(&diskSizeStr, "disk-size", "85GB", "Disk size with unit suffix: e.g., 100GB, 2TB (default: 85GB)")
+
+	// Parse flags but keep the positional arguments
+	flag.Parse()
+	args := flag.Args()
+
+	if len(args) != 1 {
+		log.Fatal("Usage: tlume [options] <machine_name>\n\nOptions:\n  -disk-size STRING   Disk size with unit (e.g., 100GB, 2TB) (default: 85GB)")
 	}
 
-	machineName := os.Args[1]
+	// Parse disk size string to get the value in bytes
+	diskSizeBytes, err := parseDiskSize(diskSizeStr)
+	if err != nil {
+		log.Fatalf("Error parsing disk size: %v", err)
+	}
+
+	machineName := args[0]
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal("Error: Unable to determine home directory", err)
@@ -58,6 +75,11 @@ func main() {
 		osValue = "macOS"
 	}
 
+	// Log the disk size being used
+	sizeInGB := float64(diskSizeBytes) / (1024 * 1024 * 1024)
+	log.Printf("Setting disk size to %.2f GB (%d bytes) - required for Lume config as Tart doesn't specify disk size",
+		sizeInGB, diskSizeBytes)
+
 	lumeConfig := map[string]interface{}{
 		"os":                osValue,
 		"cpuCount":          tartConfig["cpuCount"],
@@ -66,7 +88,7 @@ func main() {
 		"memorySize":        tartConfig["memorySize"],
 		"machineIdentifier": tartConfig["ecid"],
 		"display":           width + "x" + height,
-		"diskSize":          91268055040, // Default disk size, update if needed
+		"diskSize":          diskSizeBytes, // Using the converted bytes value
 	}
 
 	updatedLumeData, err := json.MarshalIndent(lumeConfig, "", "  ")
@@ -80,6 +102,48 @@ func main() {
 
 	log.Println("Lume config updated successfully!")
 	log.Printf("Successfully copied machine from %s to %s and updated config\n", tartMachinePath, lumeMachinePath)
+}
+
+// parseDiskSize parses a disk size string like "100GB" or "2TB" into bytes
+func parseDiskSize(sizeStr string) (int64, error) {
+	// Regular expression to match number followed by optional unit (B, KB, MB, GB, TB)
+	re := regexp.MustCompile(`^(\d+(?:\.\d+)?)([KMGT]?B)?$`)
+	matches := re.FindStringSubmatch(sizeStr)
+
+	if matches == nil {
+		return 0, fmt.Errorf("invalid disk size format: %s (examples of valid formats: 100GB, 2TB, 500)", sizeStr)
+	}
+
+	// Parse the numeric part
+	value, err := strconv.ParseFloat(matches[1], 64)
+	if err != nil {
+		return 0, err
+	}
+
+	// Convert to bytes based on the unit
+	var multiplier float64 = 1
+	if len(matches) > 2 && matches[2] != "" {
+		switch matches[2] {
+		case "B":
+			multiplier = 1
+		case "KB":
+			multiplier = 1024
+		case "MB":
+			multiplier = 1024 * 1024
+		case "GB":
+			multiplier = 1024 * 1024 * 1024
+		case "TB":
+			multiplier = 1024 * 1024 * 1024 * 1024
+		default:
+			// If no unit specified, assume GB
+			multiplier = 1024 * 1024 * 1024
+		}
+	} else {
+		// If no unit specified, assume GB
+		multiplier = 1024 * 1024 * 1024
+	}
+
+	return int64(value * multiplier), nil
 }
 
 // copyDirWithProgress copies the contents of one directory to another with a real-time progress bar

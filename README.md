@@ -53,10 +53,22 @@ Example:
 tlume macos-ventura
 ```
 
+You can also specify a custom disk size:
+
+```bash
+tlume -disk-size 100 macos-ventura  # Set disk size to 100GB
+```
+
 This will:
 1. Copy the Tart VM to Lume format
 2. Convert the configuration file
 3. Make the VM ready to use with Lume
+
+### Options
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| `-disk-size` | Disk size in GB | 85GB |
 
 ## ⚙️ How It Works
 
@@ -75,6 +87,10 @@ The conversion process preserves:
 - Network configuration
 - Display settings
 - Machine identifiers
+
+### Disk Size
+
+By default, tlume sets the disk size to 85GB for converted VMs. Since the Tart configuration doesn't include disk size information, this parameter needs to be explicitly set for Lume. You can modify this using the `-disk-size` flag if your VM requires more or less space. The value is specified in gigabytes, making it more convenient to use (e.g., `-disk-size 100` for 100GB). Note that this setting only affects the configuration and doesn't resize the actual disk image.
 
 ## 🤝 Contributing
 
